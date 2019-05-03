@@ -1,0 +1,171 @@
+---
+title: "Class 7: R functions and packages"
+author: "Xiaohui Lyu"
+date: "2019/4/24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## More on function writting
+
+First we weill revisit our function from last day
+```{r}
+source("http://tinyurl.com/rescale-R")
+```
+
+Test the **rescale()** function
+
+```{r}
+rescale(1:10)
+```
+
+```{r}
+#rescale(c(1:10,"string"))
+```
+
+```{r}
+x <- c(1:10,"string")
+!is.numeric(x)
+##rescale2(x)
+```
+
+## Function practice
+
+Write a function to identify NA elements in two vectors
+
+Start with a simple example input where I know what the answer should be.
+
+```{r}
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+is.na(x)
+is.na(y)
+```
+
+I am looking for the position where it is TRUE in both vectors.
+
+```{r}
+is.na(x) & is.na(y)
+```
+
+Take the sum to find how many
+
+```{r}
+sum(is.na(x) & is.na(y))
+```
+
+This is my working snippet of code!!
+
+```{r}
+both_na <- function(x,y){
+  sum(is.na(x)& is.na(y))
+}
+```
+
+```{r}
+both_na(x,y)
+both_na(c(NA,NA,NA),c(NA,NA,1))
+both_na(c(NA,NA,NA),c(NA,NA,1,NA))
+```
+
+Check the length of inputs are equal 
+
+```{r}
+x <- c(NA,NA,NA)
+y <- c(NA,NA,1,NA,NA,NA)
+length(x)
+length(y)
+length(x) == length(y)
+length(x) != length(y)
+```
+
+Add the checking into the function
+
+```{r}
+both_na2 <- function(x, y) {
+  if(length(x) != length(y)) {
+    stop("Input x and y should be the same length")
+  }
+  sum( is.na(x) & is.na(y) )
+}
+```
+
+Try both_na3 with extra features
+
+```{r}
+both_na3 <- function(x, y) {
+  if(length(x) != length(y)) {
+    stop("Input x and y should be vectors of the same length")
+  }
+  na.in.both <- ( is.na(x) & is.na(y) )
+  na.number <- sum(na.in.both)
+  na.which <- which(na.in.both)
+  message("Found ", na.number, " NA's at position(s):",
+  paste(na.which, collapse=", ") )
+  return( list(number=na.number, which=na.which) )
+}
+```
+
+```{r}
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+both_na3(x,y)
+```
+
+## Example grade function
+
+```{r}
+grade <- function(x){
+  (sum(x,na.rm = TRUE)-min(x,na.rm=TRUE))/(length(x)-1)
+}
+```
+
+```{r}
+grade(c(100,100,100,100,100,100,100,90))
+grade(c(100,NA,90,90,90,90,97,80))
+```
+
+```{r}
+students <- read.csv("student_homework.csv",row.names = 1)
+ans <- apply(students,1,grade)
+sort(ans,decreasing = TRUE)
+```
+
+## One last function
+
+Find the intersection of two sets
+
+```{r}
+source("http://tinyurl.com/rescale-R")
+x <- df1$IDs
+y <- df2$IDs
+
+intersect(x,y)
+```
+
+learn intersect from google and then find *%in%* in see also which is better
+
+```{r}
+x
+y
+
+x[x %in% y]
+y %in% x
+```
+
+select the sentences and choose from **code -> extract function**
+
+```{r}
+gene_intersect <- function(x, y) {
+  cbind(x[x %in% y],
+        y[y %in% x])
+}
+```
+
+```{r}
+merge(df1,df2,by="IDs")
+```
+
