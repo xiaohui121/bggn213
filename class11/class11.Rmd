@@ -1,0 +1,102 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Revisit the PDB
+
+> Q1: Download a CSV file from the PDB site (accessible from "Analyze" -> "PDB Statistics" > "by Experimental Method and Molecular Type". Move this CSV file into your RStudio project and determine the percentage of structures solved by X-Ray and Electron Microscopy. 
+
+Downloaded a CSV file from: https://www.rcsb.org/stats/summary on 2019-05-08
+
+```{r}
+db <- read.csv("Data Export Summary.csv",row.names=1)
+(db$Total/sum(db$Total))*100
+```
+
+Also can you determine what proportion of structures are protein?
+
+```{r}
+(sum(db$Proteins)/sum(db$Total))*100
+```
+
+## Section 3. Using Bio3D
+
+Let's read the PDB fiLe we downloaded into R to see how things live in this place
+
+```{r}
+library(bio3d)
+pdb <- read.pdb("1hsg.pdb")
+pdb
+```
+
+```{r}
+aa321(pdb$seqres)
+```
+
+```{r}
+pdb$atom
+```
+
+### Atom selection examples
+
+Let's select residu 10
+
+```{r}
+inds <- atom.select(pdb, resno = 1)
+inds$atom
+pdb$atom[inds$atom,]
+```
+
+### Make a protein only and ligand only PDB file
+
+Here we need to select our protein with `atom.select()` then use `write.pdb()`
+
+```{r}
+p_pdb <- atom.select(pdb,"protein",value = TRUE)
+write.pdb(p_pdb,"1hsg_protein.pdb")
+l_pdb <- atom.select(pdb,"ligand",value = TRUE)
+write.pdb(l_pdb, "1hsg_ligand.pdb")
+```
+
+```{r}
+# Load the package
+library("bio3d.view")
+# view the 3D structure
+view(pdb, "overview", col="sse")
+```
+
+## Section 6. Working with multiple PDB files
+
+### Aligning multiple structures
+
+```{r}
+# Download some example PDB files
+ids <- c("1TND_B","1AGR_A","1TAG_A","1GG2_A","1KJY_A","4G5Q_A")
+files <- get.pdb(ids, split = TRUE)
+```
+
+```{r}
+# Extract and align the chains we are interested in
+pdbs <- pdbaln(files, fit = TRUE)
+```
+
+```{r}
+# Access the first 5 rows, and 8 columns
+pdbs$ali[1:5, 1:8]
+# Associated residues numbers
+pdbs$resno[1:5, 1:8]
+```
+
+```{r}
+# Perform PCA
+pc.xray <- pca(pdbs)
+# Plot our results summary (PCA score plot and scree-plot)
+plot(pc.xray)
+
+```
+
