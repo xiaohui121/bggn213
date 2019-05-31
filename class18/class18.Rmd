@@ -1,0 +1,125 @@
+---
+title: "Class 18: Cancer Genomics"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Part I. The GenomicDataCommons R package
+
+## Accessing the Genomic Data Commons
+
+We need the bioconductor package **GenomicDataCommons**
+
+```{r eval=FALSE}
+BiocManager::install("GenomicDataCommons")
+```
+
+
+```{r}
+library(GenomicDataCommons)
+library(TCGAbiolinks)
+library(maftools)
+```
+
+Let's use this package to ping the database
+
+```{r}
+status()
+```
+
+## Querying the GDC from R
+
+```{r}
+projects <- getGDCprojects()
+head(projects)
+```
+
+```{r}
+cases_by_project <- cases() %>%
+  facet("project.project_id") %>%
+  aggregations()
+head(cases_by_project)
+```
+
+> Q9. Write the R code to make a barplot of the cases per project. Lets plot this data with a log scale for the y axis (log="y"), rotated axis labels (las=2) and color the bar coresponding to the TCGA-PAAD project.
+
+```{r}
+x <- cases_by_project$project.project_id
+
+# Make a custom color vector for our plot
+colvec <- rep("lightblue", nrow(x))
+colvec[x$key == "TCGA-PAAD"] <- "red"
+
+# Plot with 'log' for y axis and rotate labels with 'las'
+#par(___)  
+barplot(x$doc_count, names.arg=x$key, log="y", col=colvec, las=2)
+```
+
+
+# Part II. Designing a personalized cancer vaccine
+
+## Section 1. Protein sequences from healthy and tumor tissue
+
+> Q1: Identify sequence regions that contain all 9-mer peptides that are only found in the tumor.
+
+```{r}
+library(bio3d)
+```
+
+```{r}
+seq <- read.fasta("lecture18_sequences.fa")
+aln <- seqaln(seq, exefile="muscle3.8.31_i86win32.exe")
+```
+
+```{r}
+attributes(seq)
+seq$ali[,41]
+```
+
+```{r}
+mutsite <- which(((seq$ali[1,] != seq$ali[2,]) & (seq$ali[2,] != "-")))
+```
+
+Another way to find the sites (i.e. amino acids that are different)
+
+```{r}
+ide <- conserv(seq, method = "identity")
+mismatch.inds <- which(ide < 1)
+```
+
+```{r}
+gaps <- gap.inspect(seq)
+gap.inds <- gaps$t.inds
+```
+
+Find the positions in mismatch.inds that are NOT in gap.inds
+
+```{r}
+tumor.sites <- mismatch.inds[!mismatch.inds %in% gap.inds]
+```
+
+```{r}
+seq$ali[,tumor.sites]
+ids <- paste(seq$ali[1,tumor.sites],
+      tumor.sites,
+      seq$ali[2,tumor.sites],
+      sep="")
+```
+
+```{r}
+start.ind <- tumor.sites-8
+end.ind <- tumor.sites+8
+
+tumor <- NULL
+for(i in 1:length(start.ind)){
+  tumor <- seqbind(tumor,
+                   seq$ali[2,start.ind[i]:end.ind[i]])
+}
+tumor
+
+write.fasta(ids = ids, ali = tumor, file = "subsequences.fa")
+```
+
