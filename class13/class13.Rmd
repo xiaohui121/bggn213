@@ -1,5 +1,5 @@
 ---
-title: "cLASS 13: Genome Informatics (Pt. 1)"
+title: "Class 13: Genome Informatics (Pt. 1)"
 output: github_document
 ---
 

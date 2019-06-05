@@ -1,4 +1,4 @@
-cLASS 13: Genome Informatics (Pt. 1)
+Class 13: Genome Informatics (Pt. 1)
 ================
 
 ## Ensemble 1000 Genome data

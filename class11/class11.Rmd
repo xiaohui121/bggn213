@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Structural bioinformatics"
 output: github_document
 ---
 
