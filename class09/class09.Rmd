@@ -1,0 +1,134 @@
+---
+title: 'class 9: Unsupervised learning'
+author: "Xiaohui Lyu"
+date: "2019/5/1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Preparing the data
+
+I download the SCV format data file from the class website and placed it in my project directory
+
+```{r}
+wisc.df <- read.csv("WisconsinCancer.csv")
+head(wisc.df)
+```
+
+> Q3. How many of the observations have a malignant diagnosis? 
+
+```{r}
+table(wisc.df$diagnosis)
+length(wisc.df$diagnosis[wisc.df$diagnosis=="M"])
+```
+
+> Q4. How many variables/features in the data are suffixed with _mean?
+
+```{r}
+colnames(wisc.df)
+grep("_mean",colnames(wisc.df))
+length(grep("_mean",colnames(wisc.df)))
+```
+
+Select cols 3:32 and store as a matrix
+
+```{r}
+wisc.data <- as.matrix(wisc.df[,3:32])
+wisc.data
+row.names(wisc.data) <- wisc.df$id
+diagnosis <- wisc.df$diagnosis
+```
+
+
+
+## Principal Component Analysis (PCA)
+
+Do I need to scale the data befor PCA? Check the col means and standard deviations.
+
+```{r}
+round(apply(wisc.data,2,sd))
+round(colMeans(wisc.data))
+```
+
+Looks like I need to scale this data before PCA or just set the `scale=TRUE` argument to `prcomp()`
+
+```{r}
+wisc.pr <- prcomp(wisc.data, scale=TRUE)
+summary(wisc.pr)
+```
+
+```{r}
+biplot(wisc.pr)
+# Scatter plot observations by components 1 and 2
+plot( x=wisc.pr$x[,1],y=wisc.pr$x[,2] , col = diagnosis, 
+     xlab = "PC1", ylab = "PC2")
+```
+
+```{r}
+## ggplot based graph
+#install.packages("factoextra")
+library(factoextra)
+fviz_eig(wisc.pr, addlabels = TRUE)
+```
+
+```{r}
+sort(abs(wisc.pr$rotation[,1]))
+```
+
+
+
+## Hierarchical clustering
+
+```{r}
+# Scale the wisc.data data: data.scaled
+data.scaled <- scale(wisc.data)
+data.dist <- dist(data.scaled)
+wisc.hclust <- hclust(data.dist)
+```
+
+```{r}
+plot(wisc.hclust)
+abline(h=19, col="red",lty=2)
+```
+
+```{r}
+wisc.hclust.clusters <- cutree(wisc.hclust,k=4)
+table(wisc.hclust.clusters,diagnosis)
+```
+
+```{r}
+wisc.hclust.clusters <- cutree(wisc.hclust,k=10)
+table(wisc.hclust.clusters,diagnosis)
+```
+
+
+
+## Combining method
+
+I am going to start with the PCs that capture 90% of the original variance in the dataset (i.e. PC1 to PC7)
+
+```{r}
+wisc.pr.hclust <- hclust(dist(wisc.pr$x[,1:7]), method = "ward.D2")
+plot(wisc.pr.hclust)
+```
+
+```{r}
+grps <- cutree(wisc.pr.hclust,k=2)
+table(grps, diagnosis)
+```
+
+```{r}
+plot(wisc.pr$x[,1],wisc.pr$x[,2],col=grps)
+```
+
+```{r}
+new <- read.csv("new_samples.csv")
+npc <- predict(wisc.pr, newdata=new)
+npc
+plot(wisc.pr$x[,1],wisc.pr$x[,2],col=grps)
+points(npc[,1],npc[,2],col="blue",pch=16,cex=3)
+text(npc[,1],npc[,2],c(1,2),col="white")
+```
