@@ -4,10 +4,10 @@ This is my coursework from [BGGN-213 at UC San Diego](http://bioboot.github.io/b
 
 My class content includes:
 
--Class 05: [R graphics](https://github.com/xiaohui121/bggn213/blob/master/class05/class05.md)
+- Class 05: [R graphics](https://github.com/xiaohui121/bggn213/blob/master/class05/class05.md)
 
--Class 06: [R functions](https://github.com/xiaohui121/bggn213/blob/master/class06/class06.md)
+- Class 06: [R functions](https://github.com/xiaohui121/bggn213/blob/master/class06/class06.md)
 
--Class 07: [some text](https://)
+- Class 07: [some text](https://)
 
 -
