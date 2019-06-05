@@ -1,0 +1,32 @@
+---
+title: "class 16: Essential UNIX for bioinformatics"
+author: "Xiaohui Lyu"
+date: "2019/5/24"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 
+
+```{r}
+blast <- read.table("mm-second.x.zebrafish.tsv",col.names = c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"))
+head(blast)
+```
+
+```{r}
+hist(blast$bitscore, breaks = 30)
+```
+
+```{r}
+## Asuming your blast results are stored in an object called 'b'
+plot(blast$pident  * (blast$qend - blast$qstart), blast$bitscore)
+```
+
+```{r}
+library(ggplot2)
+ggplot(blast, aes(pident, bitscore)) + geom_point(alpha=0.1) + geom_smooth()
+```
+

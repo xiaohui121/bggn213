@@ -2,7 +2,7 @@
 title: 'class 9: Unsupervised learning'
 author: "Xiaohui Lyu"
 date: "2019/5/1"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
