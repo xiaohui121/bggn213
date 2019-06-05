@@ -2,6 +2,12 @@
 
 This is my coursework from [BGGN-213 at UC San Diego](http://bioboot.github.io/bggn213_S19/) during Spring 2019. Here you will find all my hands-on work.
 
-I will add my class content here soon...
+My class content includes:
 
-I will start with class-05 onward
+- Class 05: [R graphics](https://github.com/xiaohui121/bggn213/blob/master/class05/class05.md)
+
+- Class 06: [R functions](https://github.com/xiaohui121/bggn213/blob/master/class06/class06.md)
+
+- Class 07: [some text](https://)
+
+-
