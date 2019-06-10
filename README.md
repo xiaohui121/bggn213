@@ -18,7 +18,7 @@ My class content includes:
 
 - Class 11: [Structural bioinformatics](https://github.com/xiaohui121/bggn213/blob/master/class11/class11.md)
 
-- Class 12: []
+- Class 12: [Bioinformatics in drug discovery and design](https://github.com/xiaohui121/bggn213/blob/master/class12/class12.md)
 
 - Class 13: [Genome Informatics (Pt. 1)](https://github.com/xiaohui121/bggn213/blob/master/class13/class13.md)
 
