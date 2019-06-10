@@ -1,7 +1,7 @@
 Class 5: R Graphics
 ================
 Xiaohui Lyu
-Apr 17th, 2019
+2019/4/17
 
 ``` r
 # class 5 R graphics and plots
